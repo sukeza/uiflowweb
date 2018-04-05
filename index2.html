@@ -7,7 +7,7 @@ function zoom(){
   swt=event.wheelDelta;
   if(swt<=-120 && size>0.2){size=size-0.1}
     else{size=size+0.1}
-  img.style.zoom=size;
+  svg.children[0].style.zoom=size;
 }
 var lasttext;
 function getuiflow(text){
@@ -15,19 +15,16 @@ function getuiflow(text){
 		return;
 	}
 	var xhr = new XMLHttpRequest();
-	xhr.responseType = "blob";
 	// ハンドラの登録.
 	xhr.onload = function(){
-		var oURL = URL.createObjectURL(this.response);
-		document.getElementById('img').src = oURL;
-		console.log( 'COMPLETE! :');
+		document.getElementById('svg').innerHTML= this.responseText;
 	}
-	xhr.open('POST', '/uiflow/getimg.php', true);
+	xhr.open('POST', '/uiflow/getsvg.php', true);
 	xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 	xhr.send('data='+encodeURI(text));
 	lasttext = text;
-	document.getElementById('txt').innerHTML = 'http://' + location.hostname + '/uiflow/getimg.php?data=' + encodeURI(text);
-	document.getElementById('edit').innerHTML = 'http://' + location.hostname + '/uiflow/index.html?data=' + encodeURI(text);
+	document.getElementById('txt').innerHTML = 'http://' + location.hostname + '/uiflow/getsvg.php?data=' + encodeURI(text);
+	document.getElementById('edit').innerHTML = 'http://' + location.hostname + '/uiflow/index2.html?data=' + encodeURI(text);
 }
 window.onload=function(){
 	input.value=decodeURI(location.search).replace("?data=","");
@@ -42,8 +39,7 @@ window.onload=function(){
 </textarea></td></tr><tr><td>編集リンク</td><td>
 <textarea id='edit' cols=100 disabled>
 </textarea></td></tr></table>
-<div onmousewheel='zoom()'>
-<img id='img'>
+<div id='svg' onmousewheel="zoom()">
 </div>
 </body>
 </html>
